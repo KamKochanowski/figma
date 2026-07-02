@@ -32,7 +32,40 @@ z frame'a „aktualne KV i claimy"** — treści i font (Kyrial Sans Pro) są id
 - flow zakupowy w białej pigułce na dole (ikony + claimy w tealu, numerki 1-2-3),
 - przypis biały bezpośrednio na tealu — jak w aktualnym KV.
 
-## Jak podmienić placeholder na zdjęcie AI
+## Runda 2 — Wersje 3 i 4 (feedback: tło KV_BG + lepsze rozplanowanie nagród)
+
+Po feedbacku (za duże puste przestrzenie przy nagrodach, tło „KV _BG" ma być głównym,
+mocno widocznym motywem) powstały dwie kolejne wersje. Obie mają za bazę **klon frame'a
+„KV _BG"** (teal + duży jasny swirl), a sekcje nagród są kompaktowe — bez martwych
+przestrzeni po bokach.
+
+### Wersja 3 — zdjęcie w karcie po lewej + kompaktowy biały panel nagród
+
+- Link: https://www.figma.com/design/CRSVy91ln063I6LhgEUGKM/KV-BENECOL?node-id=10-2
+- Frame: `KV KONKURS — WERSJA 3 (KV_BG + panel kompakt)` (id `10:2`)
+- Duża karta na zdjęcie (1080×580) po lewej, wąski panel nagród (480 px) po prawej —
+  między nimi widoczny pas swirla z KV_BG; treść panelu wyśrodkowana (zdjęcie 160 px +
+  liczba + opis), separatory przerywane, numery w czerwieni, opisy w tealu,
+- biały flow bar na dole (ikony + claimy w tealu + numeracja 1‑2‑3), CTA na zdjęciu,
+  przypis biały na tle.
+
+### Wersja 4 — nagrody bezpośrednio na tle + zdjęcie po prawej
+
+- Link: https://www.figma.com/design/CRSVy91ln063I6LhgEUGKM/KV-BENECOL?node-id=12-2
+- Frame: `KV KONKURS — WERSJA 4 (KV_BG + nagrody na tle)` (id `12:2`)
+- Nagrody w lewej kolumnie bez panelu — bezpośrednio na swirlu (białe teksty jak
+  w aktualnym KV, przerywane białe separatory) → maksimum widocznego tła,
+- karta na zdjęcie (916×580) po prawej z CTA na dolnej krawędzi,
+- flow bar w ciemniejszym tealu z oryginalnymi białymi claimami.
+
+### Zdjęcie „ZDJĘCIE DO KV"
+
+Plik ze zdjęciem **nie był jeszcze wgrany do pliku Figma** w momencie pracy (w pliku
+jest tylko frame „KV _BG"). W wersjach 3 i 4 czeka ramka
+`ZDJĘCIE DO KV — miejsce (podmień wypełnienie)` — po wrzuceniu zdjęcia do Figmy
+wystarczy ustawić je jako wypełnienie (Fill → Image) tej ramki i usunąć tekst pomocniczy.
+
+## Jak podmienić placeholder na zdjęcie AI (wersje 1 i 2)
 
 W obu wersjach jest frame o nazwie **„🖼 TU WKLEJ ZDJĘCIE AI (podmień wypełnienie tej ramki)"**:
 
