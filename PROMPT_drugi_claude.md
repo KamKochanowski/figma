@@ -46,7 +46,13 @@ Kamil Kochanowski, graphic i motion designer, 7 lat doświadczenia, etat w agenc
    - `C:\Users\kamko\.claude\skills\*\SKILL.md` (każdy skill, m.in. `frontend-design` do stron www),
    - `.claude\` i `CLAUDE.local.md` w folderze projektu, jeśli są,
    - `C:\Users\kamko\.claude\projects\` > folder tego projektu > `memory\MEMORY.md` i pliki, do których prowadzi.
-5. Nie czytaj teraz: `MARKA.md` i `ZADANIE.md` (czytasz przy zadaniu danej marki), grafik, PSD, PDF, plików `.jsonl` z historią czatów i `_SYSTEM/ROZMOWY` (w nich tylko grep, gdy szukasz, jak coś robiliśmy), `AppData\Local\Claude\Logs` (logi techniczne).
+5. Poznaj CAŁĄ zawartość folderu PROJEKTY GRAFICZNE, żebyś miał pełne rozeznanie:
+   - zrób jednym poleceniem pełny listing drzewa folderów i plików (z rozmiarami, pomiń tylko `.git`, `node_modules` i cache),
+   - przeczytaj wszystkie pliki tekstowe z wiedzą: każdy `MARKA.md`, każdy `ZADANIE.md`, playbooki w `_SYSTEM/PLAYBOOKI` i w `00_marka`, pliki .md i .txt w `_SYSTEM`, `_KAMIL`, `KAMIL AI`, `WYCENY.md`, `ZAROBKI.md`, briefy i wiadomości do klientów w `01_brief`,
+   - grafik, PSD, AI, AEP, PDF, wideo i zipów nie otwieraj: wystarczy, że znasz ich nazwy, miejsce i rozmiar z listingu,
+   - `_SYSTEM/ROZMOWY` i `smiecie/` tylko z listingu (rozmowy są ogromne, w nich grep, gdy szukasz, jak coś robiliśmy),
+   - czytaj dużymi partiami (kilka plików naraz) i każdy plik tylko raz.
+   Nie czytaj plików `.jsonl` z historią czatów (tylko grep) ani `AppData\Local\Claude\Logs` (logi techniczne).
 
 ### Krok 2: sprawdź narzędzia (jedno polecenie, bez instalowania czegokolwiek)
 - `node -v` (Node v26: sharp, playwright, pdfjs),
@@ -60,7 +66,7 @@ Potem sprawdź MCP: Figma, Magnific, Higgsfield, Framer. Czego brakuje, wypisz m
 Pracuję na zmianę na dwóch kontach Claude w tym samym folderze, więc stan pracy ma być w plikach, nie w czacie. Przed przełączeniem konta albo gdy napiszę „koniec”, „zmieniam konto” lub kończy się limit: zaktualizuj `ZADANIE.md` bieżącego zadania (co zrobione, co dalej, następny krok), `AKTUALNE_WSPOLPRACE.md` i zapisz rozmowę `node "_SYSTEM/NARZEDZIA/zapisz_czat.js"`. Nowa rozmowa zaczyna od `AKTUALNE_WSPOLPRACE.md`.
 
 ### Krok 4: raport (maks. 8 linijek)
-Jakie skille i pamięć znalazłeś, które narzędzia i MCP działają, czego brakuje (co mam podpiąć), co jest do zrobienia teraz. Potem czekaj na zadanie.
+Ile marek, zadań i plików przejrzałeś, jakie skille i pamięć znalazłeś, które narzędzia i MCP działają, czego brakuje (co mam podpiąć), co jest do zrobienia teraz. Potem czekaj na zadanie.
 
 ### Zawsze przy pracy
 - Zadanie zaczynasz i kończysz dokładnie według „Start zadania” i „Koniec zadania” w `CLAUDE.md` (nowe zadanie: `node "_SYSTEM/SZABLONY/nowe_zadanie.js" MARKA "krotka_nazwa"`).
