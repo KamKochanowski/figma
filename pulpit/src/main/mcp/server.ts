@@ -57,4 +57,4 @@ server.registerTool(
   }
 )
 
-await server.connect(new StdioServerTransport())
+void server.connect(new StdioServerTransport())

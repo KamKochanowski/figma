@@ -73,13 +73,14 @@ body {
   background: var(--paper);
   color: var(--ink);
   font: 14px/1.45 var(--text);
-  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 a { color: inherit; }
 h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 500; }
+/* Cyfry tabelaryczne tylko tam, gdzie liczby stoją w kolumnach (w tym kroju tnum poszerza też kropki i przecinki) */
+.figure, td.num, .meter-top b, .days, .hbar-val, .nav-btn .count, .patch .lbl b { font-variant-numeric: tabular-nums; }
 
 /* Układ */
 .app { display: grid; grid-template-columns: 188px minmax(0, 1fr); height: 100%; }
@@ -214,9 +215,10 @@ h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 500; }
 .col { background: var(--sheet); border-radius: 10px; padding: 12px; min-width: 0; display: grid; gap: 8px; align-content: start; }
 .col-head { display: flex; justify-content: space-between; align-items: center; padding: 2px 2px 6px; }
 .card { background: var(--paper); border-radius: 8px; padding: 10px 12px; display: grid; gap: 6px; border-left: 3px solid var(--sw, var(--rule)); }
-.card-brand { font-size: 12px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 8px; }
+.card-brand { font-size: 12px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 8px; min-width: 0; }
+.card-brand span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-title { font-weight: 600; overflow-wrap: anywhere; }
-.card select { font-size: 12px; padding: 3px 6px; border-radius: 4px; border: 1px solid var(--rule); background: var(--sheet); }
+.card select { width: 100%; font-size: 12px; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); }
 
 /* Tabela */
 .table-wrap { overflow-x: auto; }
