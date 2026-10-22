@@ -1,0 +1,16 @@
+name = "kochdesign-zapytaj"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Domeny, z których strona może pytać (po przecinku). Na czas testów dopisz adres podglądu z Framera.
+ALLOWED_ORIGIN = "https://www.kochdesign.pl,https://kochdesign.pl"
+
+# Ochrona budżetu: maksymalnie 8 pytań na minutę z jednego adresu IP
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 8
+  period = 60

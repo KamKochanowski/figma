@@ -1,0 +1,300 @@
+<title>Arkusz Kochanowski</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Arkusz: portfolio jako arkusz z maszyny drukarskiej. Stół (tło) zmienia się z motywem,
+   papier zostaje papierem. Kolor tylko z farb procesowych i z kolorów klientów. */
+:root{
+  --table:#cfd1ce; --table-2:#c3c5c2; --chrome:#f7f7f5; --chrome-ink:#151618; --chrome-2:#5b5c58; --line:#b5b7b3;
+  --paper:#fbfbf9; --ink:#151618; --ink-2:#55564f; --ink-3:#8a8b84; --trim:#151618;
+  --c:#00a0e0; --m:#e6007e; --y:#ffe100; --k:#1a1a1a;
+  --display:'Bodoni Moda','Didot','Bodoni 72',Georgia,serif; --text:'Schibsted Grotesk','Segoe UI',system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--table:#202124;--table-2:#2a2b2f;--chrome:#2c2d31;--chrome-ink:#ecebe6;--chrome-2:#a9a8a2;--line:#45464b;color-scheme:dark}}
+:root[data-theme="dark"]{--table:#202124;--table-2:#2a2b2f;--chrome:#2c2d31;--chrome-ink:#ecebe6;--chrome-2:#a9a8a2;--line:#45464b;color-scheme:dark}
+html,body{height:100%}
+body{margin:0;background:var(--table);color:var(--chrome-ink);font:14px/1.45 var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+
+/* Pasek narzędzi */
+.bar{position:fixed;z-index:20;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+.bar>*{pointer-events:auto}
+.who{background:var(--chrome);border-radius:10px;padding:8px 12px;display:flex;align-items:baseline;gap:10px;box-shadow:0 1px 0 var(--line)}
+.who b{font:500 18px/1 var(--display)}
+.who span{color:var(--chrome-2);font-size:12px}
+.tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.t{background:var(--chrome);border:0;border-radius:8px;padding:8px 11px;box-shadow:0 1px 0 var(--line);font-size:13px}
+.t[aria-pressed="true"]{background:var(--chrome-ink);color:var(--chrome)}
+.t kbd{font:inherit;opacity:.55;margin-left:6px}
+
+/* Stół i arkusz */
+#stage{position:fixed;inset:0;touch-action:none;cursor:grab}
+#stage.drag{cursor:grabbing}
+#sheet{position:absolute;left:0;top:0;overflow:hidden;transform-origin:0 0;background:var(--paper);box-shadow:0 1px 2px rgb(0 0 0/.18),0 18px 40px -12px rgb(0 0 0/.35);will-change:transform}
+.slug{position:absolute;font:10px/1 var(--text);letter-spacing:.06em;color:var(--ink-2);white-space:nowrap}
+.title{position:absolute;left:90px;top:56px;display:flex;align-items:flex-end;gap:28px}
+.title h1{margin:0;font:500 64px/.9 var(--display);letter-spacing:-.02em;color:var(--ink)}
+.title p{margin:0 0 6px;max-width:470px;color:var(--ink-2);font-size:15px;line-height:1.4}
+.reg{position:absolute;width:26px;height:26px}
+.cbar{position:absolute;display:flex;gap:2px;height:22px}
+.cbar i{display:block;width:30px;height:100%}
+.cbar small{font-size:9px;color:var(--ink-3);align-self:flex-end;margin-left:8px;white-space:nowrap}
+
+.page{position:absolute;padding:0;border:0;background:#fff;display:block;cursor:pointer;transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s}
+.page img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
+.page:hover{transform:translateY(-3px);box-shadow:0 10px 18px -8px rgb(0 0 0/.35)}
+.page .no{position:absolute;left:18px;top:-15px;font:10px/1 var(--text);color:var(--ink-2);letter-spacing:.04em;white-space:nowrap}
+.page .nda{position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#f1f1ee 0 8px,#e8e8e4 8px 16px);color:var(--ink-2);font-size:12px}
+.crop{position:absolute;background:var(--trim)}
+
+/* Przebiegi farb przy wejściu */
+.pass{position:absolute;inset:0;mix-blend-mode:multiply;pointer-events:none;transform:translateX(-102%)}
+.go .pass{animation:pass .5s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes pass{0%{transform:translateX(-102%)}55%{transform:translateX(0)}100%{transform:translateX(102%)}}
+.ink-in{opacity:0}
+.go .ink-in{animation:inkin .35s .9s forwards}
+@keyframes inkin{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.pass{display:none}.ink-in{opacity:1}.go .ink-in{animation:none}.page{transition:none}}
+
+/* Lupa */
+#loupe{position:fixed;z-index:15;width:190px;height:190px;border-radius:50%;overflow:hidden;pointer-events:none;display:none;box-shadow:0 0 0 2px #151618,0 0 0 5px rgb(255 255 255/.85),0 14px 30px -8px rgb(0 0 0/.5);background:var(--paper)}
+#loupe .inner{position:absolute;left:0;top:0;transform-origin:0 0}
+#loupe::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,transparent 60%,rgb(0 0 0/.12));pointer-events:none}
+.loupe-hint{position:fixed;z-index:15;font-size:11px;color:var(--chrome-ink);background:var(--chrome);padding:3px 7px;border-radius:5px;pointer-events:none;display:none;white-space:nowrap}
+
+/* Karta zlecenia */
+.card{position:fixed;z-index:30;top:0;right:0;bottom:0;width:min(520px,100vw);background:var(--chrome);color:var(--chrome-ink);box-shadow:-18px 0 40px -18px rgb(0 0 0/.45);transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column}
+.card.open{transform:none}
+.card header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 14px) max(18px,env(safe-area-inset-right,0px)) 10px 18px;border-bottom:1px solid var(--line)}
+.card .doc{font-size:12px;color:var(--chrome-2)}
+.card .body{overflow-y:auto;padding:18px 18px 28px;padding-right:max(18px,env(safe-area-inset-right,0px))}
+.card h2{font:500 34px/1.05 var(--display);margin:6px 0 10px;letter-spacing:-.01em;text-wrap:balance}
+.card .client{color:var(--chrome-2);margin:0 0 14px}
+.card img{width:100%;height:auto;display:block;border-radius:4px;box-shadow:0 1px 0 var(--line)}
+.card .desc{margin:14px 0 18px;max-width:60ch}
+.spec{display:grid;grid-template-columns:110px minmax(0,1fr);border-top:1px solid var(--line)}
+.spec dt,.spec dd{margin:0;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.spec dt{color:var(--chrome-2)}
+.spec dd{overflow-wrap:anywhere}
+.ai{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.ai div{background:var(--table-2);border-radius:8px;padding:10px 12px;font-size:13px}
+.ai b{display:block;font-size:11px;color:var(--chrome-2);font-weight:500;margin-bottom:4px}
+.nav{display:flex;gap:6px}
+
+/* Lista prac */
+.list{position:fixed;z-index:25;inset:0;background:var(--table);overflow-y:auto;display:none;padding:calc(env(safe-area-inset-top,0px) + 70px) max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.list.open{display:block}
+.list ol{list-style:none;margin:0 auto;padding:0;max-width:980px;display:grid;gap:2px}
+.list li button{width:100%;display:grid;grid-template-columns:38px 120px minmax(0,1fr) auto;gap:16px;align-items:center;text-align:left;background:var(--chrome);border:0;padding:10px 14px;border-radius:6px}
+.list li button:hover{background:var(--table-2)}
+.list .n{font:500 20px var(--display);color:var(--chrome-2)}
+.list img{width:120px;height:85px;object-fit:cover;border-radius:3px}
+.list .lt{font-weight:600}
+.list .lc{color:var(--chrome-2);font-size:13px}
+.list .ly{color:var(--chrome-2);font-size:12px;white-space:nowrap}
+
+/* Zapytaj */
+.ask{position:fixed;z-index:28;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 12px);width:min(380px,calc(100vw - 24px));background:var(--chrome);border-radius:12px;box-shadow:0 18px 40px -16px rgb(0 0 0/.5);display:none;flex-direction:column;max-height:70vh}
+.ask.open{display:flex}
+.ask header{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.ask .msgs{padding:12px 14px;overflow-y:auto;display:grid;gap:10px;font-size:13px}
+.ask .q{justify-self:end;background:var(--table-2);padding:7px 10px;border-radius:8px;max-width:85%}
+.ask .a{max-width:95%}
+.ask .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px}
+.ask .chips button{border:1px solid var(--line);background:transparent;border-radius:99px;padding:5px 10px;font-size:12px}
+.ask .refs{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.ask .refs button{border:0;padding:0;background:none;width:84px;text-align:left;font-size:11px;color:var(--chrome-2)}
+.ask .refs img{width:84px;height:60px;object-fit:cover;border-radius:3px;display:block;margin-bottom:3px}
+.demo{font-size:11px;color:var(--chrome-2);padding:0 14px 12px}
+
+.zoom{position:fixed;z-index:20;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;gap:4px}
+.help{position:fixed;z-index:20;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);font-size:12px;color:var(--chrome-2);background:var(--chrome);padding:5px 10px;border-radius:99px;white-space:nowrap}
+@media (max-width:700px){.who span,.help,.t kbd{display:none}.list li button{grid-template-columns:28px 84px minmax(0,1fr)}.list img{width:84px;height:60px}.list .ly{display:none}.ai{grid-template-columns:1fr}}
+</style>
+
+<div class="bar">
+  <div class="who"><b>Kamil Kochanowski</b><span>art director i senior grafik</span></div>
+  <div class="tools">
+    <button class="t" id="b-list" aria-pressed="false">Lista prac<kbd>L</kbd></button>
+    <button class="t" id="b-loupe" aria-pressed="true">Lupa<kbd>Z</kbd></button>
+    <button class="t" id="b-ask" aria-pressed="false">Zapytaj</button>
+  </div>
+</div>
+
+<div id="stage" aria-label="Arkusz z pracami, przeciągnij, aby przesunąć, kółko myszy przybliża"><div id="sheet"></div></div>
+<div id="loupe" aria-hidden="true"><div class="inner"></div></div>
+<div class="loupe-hint" id="hint">Tak sprawdzam każdy plik przed drukiem</div>
+
+<div class="zoom">
+  <button class="t" id="z-out" aria-label="Oddal">-</button>
+  <button class="t" id="z-fit">Cały arkusz</button>
+  <button class="t" id="z-in" aria-label="Przybliż">+</button>
+</div>
+<div class="help">Przeciągnij arkusz, przybliżaj kółkiem, kliknij pracę</div>
+
+<aside class="card" id="card" aria-label="Karta zlecenia" aria-hidden="true">
+  <header><span class="doc" id="c-doc">Karta zlecenia</span><div class="nav"><button class="t" id="c-prev" aria-label="Poprzednia praca">Poprz.</button><button class="t" id="c-next" aria-label="Następna praca">Nast.</button><button class="t" id="c-close">Zamknij</button></div></header>
+  <div class="body" id="c-body"></div>
+</aside>
+
+<section class="list" id="list" aria-label="Lista prac"><ol id="list-ol"></ol></section>
+
+<section class="ask" id="ask" aria-label="Zapytaj">
+  <header><b>Zapytaj o projekt</b><button class="t" id="ask-close">Zamknij</button></header>
+  <div class="msgs" id="ask-msgs"><div class="a">Zapytaj o dowolny projekt. Odpowiadam na podstawie moich case studies.</div></div>
+  <div class="chips" id="ask-chips"></div>
+  <div class="demo">Podgląd: odpowiedzi przygotowane z Twojego PDF-a. W wersji na stronie odpowiada Claude na podstawie case studies.</div>
+</section>
+
+<script>
+const P = /*PROJECTS*/[];
+const IMG = /*IMAGES*/{};
+const BRAND = ['#F8B002','#E31C25','#EA5422','#3D2617','#0585FF','#1B1C1C'];
+
+// Geometria arkusza (px w skali 1)
+const COLS = 5, TW = 280, TH = 198, G = 26, ML = 90, MT = 190, MB = 120;
+const ROWS = Math.ceil(P.length / COLS);
+const W = ML * 2 + COLS * TW + (COLS - 1) * G;
+const H = MT + ROWS * TH + (ROWS - 1) * G + MB;
+const sheet = document.getElementById('sheet');
+sheet.style.width = W + 'px'; sheet.style.height = H + 'px';
+
+function el(tag, cls, css, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (css) Object.assign(e.style, css); if (html != null) e.innerHTML = html; return e; }
+function reg(x, y) { return `<svg class="reg" style="left:${x - 13}px;top:${y - 13}px" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="7" fill="none" stroke="#151618" stroke-width=".8"/><circle cx="13" cy="13" r="3.2" fill="#151618"/><path d="M13 0v26M0 13h26" stroke="#151618" stroke-width=".8"/></svg>`; }
+
+function build(target, interactive) {
+  target.innerHTML = '';
+  target.append(el('div', 'slug ink-in', { left: ML + 'px', top: '22px' }, 'KOCHANOWSKI_PORTFOLIO_2026.pdf&nbsp;&nbsp;&nbsp;arkusz 1/1&nbsp;&nbsp;&nbsp;4/4 CMYK&nbsp;&nbsp;&nbsp;FOGRA39&nbsp;&nbsp;&nbsp;' + P.length + ' użytków&nbsp;&nbsp;&nbsp;kochdesign.pl'));
+  const t = el('div', 'title ink-in'); t.innerHTML = '<h1>Kamil Kochanowski</h1><p>Art director i senior grafik. Kampanie, opakowania i motion, od pomysłu do pliku w drukarni.</p>'; target.append(t);
+  target.insertAdjacentHTML('beforeend', reg(W / 2, 34) + reg(W / 2, H - 34) + reg(34, H / 2) + reg(W - 34, H / 2));
+  const cb = el('div', 'cbar', { left: ML + 'px', top: H - 72 + 'px' });
+  ['#00a0e0', '#e6007e', '#ffe100', '#1a1a1a', 'rgb(0 160 224/.5)', 'rgb(230 0 126/.5)', 'rgb(255 225 0/.5)', 'rgb(26 26 26/.5)', ...BRAND].forEach(c => cb.append(el('i', '', { background: c })));
+  cb.append(el('small', '', null, 'C M Y K, tinty 50%, kolory marek: Ślusarstwo Niemiec, AW Parts, Donateo, Vanillove, Zakuwanie24'));
+  target.append(cb);
+  P.forEach((p, i) => {
+    const x = ML + (i % COLS) * (TW + G), y = MT + Math.floor(i / COLS) * (TH + G);
+    const b = el(interactive ? 'button' : 'div', 'page', { left: x + 'px', top: y + 'px', width: TW + 'px', height: TH + 'px' });
+    if (interactive) { b.type = 'button'; b.setAttribute('aria-label', `${p.n} ${p.client}: ${p.headline}`); b.dataset.i = i; }
+    b.append(el('span', 'no', null, `${p.n} ${p.short}`));
+    const img = new Image(); img.src = IMG[p.img]; img.alt = ''; img.draggable = false; b.append(img);
+    target.append(b);
+    // znaczniki cięcia w narożnikach użytku
+    const L = 12, o = 5;
+    [[x, y, -1, -1], [x + TW, y, 1, -1], [x, y + TH, -1, 1], [x + TW, y + TH, 1, 1]].forEach(([cx, cy, sx, sy]) => {
+      target.append(el('i', 'crop', { left: (sx < 0 ? cx - o - L : cx + o) + 'px', top: cy - .4 + 'px', width: L + 'px', height: '.8px' }));
+      target.append(el('i', 'crop', { left: cx - .4 + 'px', top: (sy < 0 ? cy - o - L : cy + o) + 'px', width: '.8px', height: L + 'px' }));
+    });
+  });
+  if (interactive) ['#00a0e0', '#e6007e', '#ffe100', '#1a1a1a'].forEach((c, k) => target.append(el('div', 'pass', { background: c, opacity: k === 3 ? .35 : .55, animationDelay: k * 110 + 'ms' })));
+}
+build(sheet, true);
+const loupe = document.getElementById('loupe'), inner = loupe.querySelector('.inner');
+inner.style.width = W + 'px'; inner.style.height = H + 'px'; inner.style.background = 'var(--paper)'; inner.style.position = 'absolute';
+build(inner, false);
+inner.querySelectorAll('.ink-in').forEach(e => e.style.opacity = 1);
+
+// Widok: przesuwanie i przybliżanie
+const stage = document.getElementById('stage');
+let s = 1, tx = 0, ty = 0;
+function apply() { sheet.style.transform = `translate(${tx}px,${ty}px) scale(${s})`; }
+function fit() { const pad = innerWidth < 700 ? 16 : 70; s = Math.min((innerWidth - pad * 2) / W, (innerHeight - pad * 2 - 40) / H); tx = (innerWidth - W * s) / 2; ty = (innerHeight - H * s) / 2 + 14; apply(); }
+function zoomAt(f, cx, cy) { const ns = Math.min(4, Math.max(.15, s * f)); tx = cx - (cx - tx) * (ns / s); ty = cy - (cy - ty) * (ns / s); s = ns; apply(); }
+fit(); addEventListener('resize', fit);
+requestAnimationFrame(() => document.body.classList.add('go'));
+setTimeout(() => sheet.querySelectorAll('.pass').forEach(e => e.remove()), 1400);
+
+const pts = new Map(); let moved = 0, pinch0 = 0;
+stage.addEventListener('pointerdown', e => { stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; stage.classList.add('drag'); if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+stage.addEventListener('pointermove', e => {
+  if (pts.has(e.pointerId)) {
+    const [px, py] = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 2) { const [a, b] = [...pts.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0) zoomAt(d / pinch0, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); pinch0 = d; moved += 10; }
+    else { tx += e.clientX - px; ty += e.clientY - py; moved += Math.abs(e.clientX - px) + Math.abs(e.clientY - py); apply(); }
+  }
+  lens(e);
+});
+const end = e => { pts.delete(e.pointerId); if (!pts.size) stage.classList.remove('drag'); pinch0 = 0; };
+stage.addEventListener('pointerup', e => { const hit = !pts.size || pts.size === 1 ? document.elementsFromPoint(e.clientX, e.clientY).find(x => x.classList && x.classList.contains('page')) : null; end(e); if (hit && moved < 6) open(+hit.dataset.i); });
+stage.addEventListener('pointercancel', end);
+stage.addEventListener('pointerleave', () => { loupe.style.display = hint.style.display = 'none'; });
+stage.addEventListener('wheel', e => { e.preventDefault(); zoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .0018)), e.clientX, e.clientY); lens(e); }, { passive: false });
+document.getElementById('z-in').onclick = () => zoomAt(1.3, innerWidth / 2, innerHeight / 2);
+document.getElementById('z-out').onclick = () => zoomAt(1 / 1.3, innerWidth / 2, innerHeight / 2);
+document.getElementById('z-fit').onclick = fit;
+
+// Lupa drukarska
+const hint = document.getElementById('hint');
+let loupeOn = matchMedia('(pointer:fine)').matches;
+const bL = document.getElementById('b-loupe'); bL.setAttribute('aria-pressed', loupeOn);
+function lens(e) {
+  if (!loupeOn || e.pointerType === 'touch' || stage.classList.contains('drag')) { loupe.style.display = hint.style.display = 'none'; return; }
+  const sx = (e.clientX - tx) / s, sy = (e.clientY - ty) / s;
+  if (sx < 0 || sy < 0 || sx > W || sy > H) { loupe.style.display = hint.style.display = 'none'; return; }
+  const k = Math.max(s * 2.6, .9), R = 95;
+  loupe.style.display = 'block'; loupe.style.left = e.clientX - R + 'px'; loupe.style.top = e.clientY - R + 'px';
+  inner.style.transform = `translate(${R - sx * k}px,${R - sy * k}px) scale(${k})`;
+  hint.style.display = 'block'; hint.style.left = e.clientX + R - 20 + 'px'; hint.style.top = e.clientY + R - 14 + 'px';
+}
+function toggleLoupe() { loupeOn = !loupeOn; bL.setAttribute('aria-pressed', loupeOn); if (!loupeOn) loupe.style.display = hint.style.display = 'none'; }
+bL.onclick = toggleLoupe;
+
+// Karta zlecenia
+const card = document.getElementById('card'), cbody = document.getElementById('c-body');
+let cur = -1;
+function open(i) {
+  cur = (i + P.length) % P.length; const p = P[cur];
+  document.getElementById('c-doc').textContent = `Karta zlecenia ${p.n}/${String(P.length).padStart(2, '0')}`;
+  cbody.innerHTML = `<div class="doc">${p.short}</div><h2>${p.headline}</h2><p class="client">${p.client}</p><img src="${IMG[p.img]}" alt="${p.short}, strona z portfolio"><p class="desc">${p.desc}</p>
+  ${p.ai || p.me ? `<div class="ai"><div><b>Co zrobiło AI</b>${p.ai || 'Bez AI w tym zleceniu'}</div><div><b>Co zrobiłem ja</b>${p.me}</div></div>` : ''}
+  <dl class="spec"><dt>Klient</dt><dd>${p.client}</dd><dt>Kanał</dt><dd>${p.channel}</dd><dt>Narzędzia</dt><dd>${p.tools}</dd>${p.result ? `<dt>Wynik</dt><dd>${p.result}</dd>` : ''}</dl>`;
+  card.classList.add('open'); card.setAttribute('aria-hidden', 'false'); cbody.scrollTop = 0;
+  document.getElementById('c-close').focus({ preventScroll: true });
+}
+function close() { card.classList.remove('open'); card.setAttribute('aria-hidden', 'true'); }
+document.getElementById('c-close').onclick = close;
+document.getElementById('c-prev').onclick = () => open(cur - 1);
+document.getElementById('c-next').onclick = () => open(cur + 1);
+
+// Lista prac (tryb szybki)
+const list = document.getElementById('list'), bList = document.getElementById('b-list');
+document.getElementById('list-ol').innerHTML = P.map((p, i) => `<li><button type="button" data-i="${i}"><span class="n">${p.n}</span><img src="${IMG[p.img]}" alt=""><span><span class="lt">${p.headline}</span><br><span class="lc">${p.client}. ${p.short}</span></span><span class="ly">${p.channel}</span></button></li>`).join('');
+list.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) open(+b.dataset.i); });
+function toggleList(force) { const on = force ?? !list.classList.contains('open'); list.classList.toggle('open', on); bList.setAttribute('aria-pressed', on); }
+bList.onclick = () => toggleList();
+if (innerWidth < 700) toggleList(true);
+
+// Zapytaj (podgląd ze skryptem)
+const ask = document.getElementById('ask'), bAsk = document.getElementById('b-ask'), msgs = document.getElementById('ask-msgs');
+const QA = [
+  ['Pokaż druk i opakowania', 'Druk to moja podstawa, z wykształcenia jestem technikiem procesów graficznych. Ostatnio: kalendarz trójdzielny z lakierem UV (cztery wersje, PDF/X-4), rodzina pudełek AW Parts na czterech wykrojnikach i foliopak, etykiety Green Essence z brandbookiem.', ['niemiec', 'awparts', 'green']],
+  ['Jak pracujesz z AI?', 'AI robi u mnie research, kontrolę plików i powtarzalne kroki, decyzje projektowe zostają po mojej stronie. Przykład: film 4K dla Vaillanta w 7 dni, 14 filmów MAPEI wyczyszczonych z logo bez przebudowy montażu, postprodukcja spotów MOYA.', ['vaillant', 'mapei', 'moya']],
+  ['Jestem z agencji, co dowozisz?', 'Key visual, adaptacje na formaty, pliki do druku i motion, zwykle w kilka dni. Pracowałem dla marek z portfela They (Vaillant, MOYA, MAPEI, MSD) i dla agencji DPPG oraz Better and More.', ['msd', 'within', 'niemiec']],
+  ['E-commerce i Amazon', 'Galerie produktowe na Amazon.de i UK, serie dla Domator24 w 11 językach w jednym pliku z warstwami, kreacje Meta Ads.', ['domator', 'pocardo', 'yerbador']]
+];
+const chips = document.getElementById('ask-chips');
+chips.innerHTML = QA.map((q, i) => `<button type="button" data-q="${i}">${q[0]}</button>`).join('');
+chips.addEventListener('click', e => {
+  const b = e.target.closest('button[data-q]'); if (!b) return; const [q, a, refs] = QA[+b.dataset.q];
+  msgs.insertAdjacentHTML('beforeend', `<div class="q">${q}</div><div class="a">${a}<div class="refs">${refs.map(id => { const i = P.findIndex(p => p.id === id); return i < 0 ? '' : `<button type="button" data-i="${i}"><img src="${IMG[P[i].img]}" alt="">${P[i].short}</button>`; }).join('')}</div></div>`);
+  msgs.scrollTop = msgs.scrollHeight;
+});
+msgs.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) open(+b.dataset.i); });
+function toggleAsk(force) { const on = force ?? !ask.classList.contains('open'); ask.classList.toggle('open', on); bAsk.setAttribute('aria-pressed', on); }
+bAsk.onclick = () => toggleAsk();
+document.getElementById('ask-close').onclick = () => toggleAsk(false);
+
+addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  const k = e.key.toLowerCase();
+  if (k === 'escape') { if (card.classList.contains('open')) close(); else if (ask.classList.contains('open')) toggleAsk(false); else toggleList(false); }
+  if (k === 'l') toggleList();
+  if (k === 'z') toggleLoupe();
+  if (card.classList.contains('open') && k === 'arrowright') open(cur + 1);
+  if (card.classList.contains('open') && k === 'arrowleft') open(cur - 1);
+  if (k === '+' || k === '=') zoomAt(1.25, innerWidth / 2, innerHeight / 2);
+  if (k === '-') zoomAt(.8, innerWidth / 2, innerHeight / 2);
+  if (k === '0') fit();
+});
+</script>
