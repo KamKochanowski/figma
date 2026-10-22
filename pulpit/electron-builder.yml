@@ -1,0 +1,18 @@
+appId: pl.kochdesign.pulpit
+productName: Pulpit
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - out/**
+  - resources/**
+  - package.json
+asarUnpack:
+  - resources/**
+  - node_modules/@anthropic-ai/claude-agent-sdk/**
+win:
+  target: nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: Pulpit
