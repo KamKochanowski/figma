@@ -12,7 +12,12 @@ Do podpięcia na drugim koncie (to jest przypisane do konta, nie do komputera):
 3. Skille wgrane kiedyś przez claude.ai (nie te z dysku): wgraj je też na drugim koncie.
 4. Envato w wbudowanej przeglądarce: jeśli wyloguje, zaloguj raz.
 
-Przełączenie: terminal w folderze PROJEKTY GRAFICZNE, `claude`, `/login` (drugie konto), `/mcp`, nowa rozmowa i wklej prompt poniżej. Prompt wklejasz tylko raz, potem zasady są w `CLAUDE.md`.
+## Jak przełączyć konto
+Aplikacja Claude na komputerze (polecane): lewy dolny róg, Twoje imię lub inicjały > Wyloguj (Log out) > zaloguj się drugim kontem. Potem zakładka Code, wybierz folder PROJEKTY GRAFICZNE, nowa sesja, wklej prompt poniżej.
+
+Terminal: w Eksploratorze otwórz folder PROJEKTY GRAFICZNE, w pasku adresu wpisz `powershell` i Enter. Wpisz `claude`, potem `/login`. Otworzy się przeglądarka: jeśli jest tam zalogowane pierwsze konto, najpierw wyloguj się z claude.ai albo wklej link w oknie incognito. Po zalogowaniu wpisz `/mcp` (podpięcie connectorów), potem `/clear` (czysta rozmowa) i wklej prompt.
+
+Prompt wklejasz tylko raz, potem zasady są w `CLAUDE.md`. Następnym razem samo przelogowanie.
 
 ## Prompt (wklej całość)
 
