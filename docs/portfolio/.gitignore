@@ -1,0 +1,7 @@
+# Repozytorium jest publiczne. Prace Kamila (w tym dla klientów agencji), opisy jego case studies,
+# zrzuty cudzych stron i gotowe PDF-y zostają poza gitem, dopóki repo nie będzie prywatne.
+research_notes/*/kamil_media/
+research_notes/*/screens/
+research_notes/*/case_studies_kamila.md
+reports/
+koncepcje_pdf/
